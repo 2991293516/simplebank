@@ -103,6 +103,16 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferTxParams) (Trans
 			AddMoney(ctx, q, arg.ToAccountID, arg.Amount, arg.FromAccountID, -arg.Amount)
 		}
 
+		result.FromAccount, err = q.GetAccount(ctx, arg.FromAccountID)
+		if err != nil {
+			return err
+		}
+
+		result.ToAccount, err = q.GetAccount(ctx, arg.ToAccountID)
+		if err != nil {
+			return err
+		}
+
 		return nil
 	})
 
