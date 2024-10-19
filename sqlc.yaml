@@ -1,0 +1,16 @@
+version: "1"
+packages:
+  - name: "db"
+    # 生成代码路径
+    path: "./db/sqlc"
+    # sql语句文件路径
+    queries: "./db/query/"
+    # 表结构文件路径
+    schema: "./db/migration/"
+    engine: "postgresql" 
+    # 生成代码时是否生成json tag
+    emit_json_tags: true
+    # 生成代码时是否生成prepared query
+    emit_prepared_queries: false
+    emit_interface: false
+    emit_exact_table_names: false
