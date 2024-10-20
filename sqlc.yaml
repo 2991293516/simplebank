@@ -14,3 +14,5 @@ packages:
     emit_prepared_queries: false
     emit_interface: false
     emit_exact_table_names: false
+    # 查询多个实体时，函数返回空切片而不是null
+    emit_empty_slices: true
