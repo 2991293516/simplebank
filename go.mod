@@ -7,6 +7,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
+	github.com/golang/mock v1.6.0
 )
 
 require (
