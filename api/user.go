@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 	db "simplebank/db/sqlc"
+	"simplebank/util"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,6 +21,12 @@ func (server *Server) createUser(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	req.HashedPassword, err = util.HashedPassword(req.HashedPassword)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
