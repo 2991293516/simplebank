@@ -24,12 +24,15 @@ type UserEqMatcher struct {
 	password string
 }
 
+// 这个x是 经过CreateApi执行数据库操作前的逻辑处理过后的请求体
 func (e UserEqMatcher) Matches(x interface{}) bool {
+	// 对arg进行断言
 	arg, ok := x.(db.CreateUserParams)
 	if !ok {
 		return false
 	}
 
+	// 密码进行校验
 	flag := util.CheckPassword(e.password, arg.HashedPassword)
 	if !flag {
 		return false
