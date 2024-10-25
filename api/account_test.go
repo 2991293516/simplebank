@@ -90,7 +90,7 @@ func TestGetAccountAPI(t *testing.T) {
 		testCases[i].buildStubs(store)
 
 		// 创建server
-		server := NewServer(store)
+		server := newTestServer(t, store)
 		// 创建用于记录http请求的recorder
 		recorder := httptest.NewRecorder()
 
