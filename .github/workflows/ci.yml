@@ -22,12 +22,6 @@ jobs:
           POSTGRES_DB: simple_bank
         ports:
           - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s 
-          --health-timeout 5s
-          --health-retries 5
-
 
     steps:
     - uses: actions/checkout@v4
@@ -44,23 +38,21 @@ jobs:
         sudo mv migrate /usr/bin/migrate
         which migrate
 
-    - name: Check PostgreSQL NOW()
-      run: |
-        echo "Current date and time in PostgreSQL (UTC):"
-        PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "SELECT NOW();"
-     
     - name: Run migrations
       run: make migrateup
 
-    - name: Check accounts table structure
-      run: |
-        PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "\l"  # List databases
-        PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "\dt"  # List tables in public schema
-        PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "\d accounts"  # Describe the accounts table
-        PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "INSERT INTO users (username, hashed_password, full_name, email) VALUES ('username', 'password', 'full_name','email');"
-        PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "SELECT * FROM users;"
-        PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "INSERT INTO accounts (owner, balance, currency) VALUES ('username', 1000, 'USD');"
-        PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "SELECT * FROM accounts;"
+    # 解决github action中运行sqlc下的测试时，出现create_at为0001-01-01 00:00:00 +0000的问题
+    # - name: Check accounts table structure
+    #   run: |
+    #     echo "Current date and time in PostgreSQL (UTC):"
+    #     PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "SELECT NOW();"
+    #     PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "\l"  # List databases
+    #     PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "\dt"  # List tables in public schema
+    #     PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "\d accounts"  # Describe the accounts table
+    #     PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "INSERT INTO users (username, hashed_password, full_name, email) VALUES ('username', 'password', 'full_name','email');"
+    #     PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "SELECT * FROM users;"
+    #     PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "INSERT INTO accounts (owner, balance, currency) VALUES ('username', 1000, 'USD');"
+    #     PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "SELECT * FROM accounts;"
 
     - name: Test
       run: make test
