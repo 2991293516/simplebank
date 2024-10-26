@@ -1,3 +1,4 @@
+
 name: ci-test
 
 on:
@@ -21,11 +22,12 @@ jobs:
           POSTGRES_DB: simple_bank
         ports:
           - 5432:5432
-        options: >
+        options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
 
     steps:
     - uses: actions/checkout@v4
@@ -48,6 +50,6 @@ jobs:
     - name: Check PostgreSQL NOW()
       run: |
         psql -h localhost -U root -d simple_bank -c "SELECT NOW();"
-
+      
     - name: Test
       run: make test
