@@ -51,7 +51,9 @@ jobs:
 
     - name: Check accounts table structure
       run: |
-        PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "\d accounts"
+        PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "\l"  # List databases
+        PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "\dt"  # List tables in public schema
+        PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "\d accounts"  # Describe the accounts table
     
     - name: Run migrations
       run: make migrateup
