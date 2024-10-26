@@ -24,7 +24,7 @@ jobs:
           - 5432:5432
         options: >-
           --health-cmd pg_isready
-          --health-interval 10s
+          --health-interval 10s 
           --health-timeout 5s
           --health-retries 5
 
@@ -44,8 +44,10 @@ jobs:
         sudo mv migrate /usr/bin/migrate
         which migrate
 
-    - name: Check PostgreSQL logs
-      run: docker logs postgres
+    - name: Check PostgreSQL NOW()
+      run: |
+        echo "Current date and time in PostgreSQL (UTC):"
+        PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "SELECT NOW() AT TIME ZONE 'UTC';"
 
     - name: Run migrations
       run: make migrateup
