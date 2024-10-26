@@ -44,6 +44,9 @@ jobs:
         sudo mv migrate /usr/bin/migrate
         which migrate
 
+    - name: Check PostgreSQL logs
+      run: docker logs postgres
+
     - name: Run migrations
       run: make migrateup
 
