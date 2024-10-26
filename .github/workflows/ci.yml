@@ -49,6 +49,10 @@ jobs:
         echo "Current date and time in PostgreSQL (UTC):"
         PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "SELECT NOW() AT TIME ZONE 'UTC';"
 
+    - name: Check accounts table structure
+      run: |
+        PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "\d accounts"
+    
     - name: Run migrations
       run: make migrateup
 
