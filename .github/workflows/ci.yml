@@ -10,6 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      TZ: 'Asia/Shanghai'  # 设置时区为中国上海
 
     services:
       postgres:
