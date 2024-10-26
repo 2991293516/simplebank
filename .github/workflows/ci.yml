@@ -57,7 +57,7 @@ jobs:
         PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "\l"  # List databases
         PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "\dt"  # List tables in public schema
         PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "\d accounts"  # Describe the accounts table
-        PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "INSERT INTO uers (username, hashed_password, full_name, email) VALUES ('username', 'password', 'full_name',"email");"
+        PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "INSERT INTO users (username, hashed_password, full_name, email) VALUES ('username', 'password', 'full_name',"email");"
         PGPASSWORD=secret psql -h localhost -U root -d simple_bank -c "SELECT * FROM users;"
 
     - name: Test
