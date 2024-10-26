@@ -2,12 +2,17 @@ package api
 
 import (
 	"database/sql"
-	"log"
+	"errors"
 	"net/http"
 	db "simplebank/db/sqlc"
+	"simplebank/token"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
+)
+
+var (
+	ErrNotPower = errors.New("don't have power to get this account")
 )
 
 type createAccountRequest struct {
@@ -22,7 +27,6 @@ func (server *Server) createAccount(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	log.Println("createAccount:", req)
 
 	arg := db.CreateAccountParams{
 		Owner:    req.Owner,
@@ -40,6 +44,7 @@ func (server *Server) createAccount(ctx *gin.Context) {
 				return
 			}
 		}
+
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
@@ -70,6 +75,13 @@ func (server *Server) getAccount(ctx *gin.Context) {
 		return
 	}
 
+	//不可以获取不是自己的账户信息
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	if authPayload.Username != account.Owner {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(ErrNotPower))
+		return
+	}
+
 	ctx.JSON(http.StatusOK, account)
 }
 
@@ -86,7 +98,10 @@ func (server *Server) listAccount(ctx *gin.Context) {
 		return
 	}
 
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+
 	arg := db.ListAccountsParams{
+		Owner:  authPayload.Username,
 		Limit:  req.PageSize,
 		Offset: (req.PageID - 1) * req.PageSize,
 	}

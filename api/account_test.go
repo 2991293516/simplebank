@@ -10,15 +10,21 @@ import (
 	"net/http/httptest"
 	mockdb "simplebank/db/mock"
 	db "simplebank/db/sqlc"
+	"simplebank/token"
 	"simplebank/util"
 	"testing"
+	"time"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
 
 func TestGetAccountAPI(t *testing.T) {
+	user, _ := randomUser(t)
+	require.NotEmpty(t, user)
+
 	account := randomAccount()
+	account.Owner = user.Username
 
 	testCases := []struct {
 		name          string
@@ -81,7 +87,6 @@ func TestGetAccountAPI(t *testing.T) {
 	}
 
 	for i := range testCases {
-
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -97,6 +102,9 @@ func TestGetAccountAPI(t *testing.T) {
 		url := fmt.Sprintf("/accounts/%d", testCases[i].accountID)
 		request, err := http.NewRequest(http.MethodGet, url, nil)
 		require.NoError(t, err)
+
+		addAuthorizationHeader(t, request, server.tokenMaker, authorizationTypeBearer, user.Username, token.DepositorRole, time.Minute)
+
 		// 发送http请求
 		server.router.ServeHTTP(recorder, request)
 

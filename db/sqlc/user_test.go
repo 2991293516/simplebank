@@ -8,12 +8,19 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func createRandomUser(t *testing.T) User {
+func createRandomUser(t *testing.T, name ...string) User {
 	password := util.RandomString(6)
 	hashedPassword, err := util.HashedPassword(password)
 
+	var username string
+	if len(name) > 0 {
+		username = name[0]
+	} else {
+		username = util.RandomOwner()
+	}
+
 	arg := CreateUserParams{
-		Username:       util.RandomOwner(),
+		Username:       username,
 		HashedPassword: hashedPassword,
 		FullName:       util.RandomOwner(),
 		Email:          util.RandomEmail(),

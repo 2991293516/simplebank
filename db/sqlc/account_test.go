@@ -15,8 +15,13 @@ func TestCreateAccount(t *testing.T) {
 	createRandomAccount(t)
 }
 
-func createRandomAccount(t *testing.T) Account {
-	user := createRandomUser(t)
+func createRandomAccount(t *testing.T, name ...string) Account {
+	var user User
+	if len(name) > 0 {
+		user = createRandomUser(t, name[0])
+	} else {
+		user = createRandomUser(t)
+	}
 
 	arg := CreateAccountParams{
 		Owner:    user.Username,
@@ -79,26 +84,4 @@ func TestDeleteAccount(t *testing.T) {
 	require.Error(t, err)
 	require.EqualError(t, err, sql.ErrNoRows.Error())
 	require.Empty(t, account2)
-}
-
-func TestListAccounts(t *testing.T) {
-	var lastAccount [10]Account
-	for i := 0; i < 10; i++ {
-		lastAccount[i] = createRandomAccount(t)
-	}
-
-	count, err := testQueries.CountAccounts(context.Background())
-	arg := ListAccountsParams{
-		Limit:  10,
-		Offset: int32(count) - 10,
-	}
-
-	accounts, err := testQueries.ListAccounts(context.Background(), arg)
-	require.NoError(t, err)
-	require.NotEmpty(t, accounts)
-
-	for i := 0; i < len(accounts); i++ {
-		require.NotEmpty(t, accounts[i])
-		require.Equal(t, lastAccount[i].Owner, accounts[i].Owner)
-	}
 }

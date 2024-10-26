@@ -9,8 +9,7 @@ import (
 var validCurrency validator.Func = func(fieldLevel validator.FieldLevel) bool {
 	currency, ok := fieldLevel.Field().Interface().(string)
 	if ok {
-		util.IsSupportedCurrency(currency)
-		return true
+		return util.IsSupportedCurrency(currency)
 	}
 	return false
 }
